@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorkuntza Galdu AI Da? — Algoritmoaren Itzala</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+
+:root {
+  --bg:#080808;--bg2:#0f0f0f;--bg3:#141414;
+  --text:#e8e3d9;--muted:#6b6762;--mid:#a09b94;
+  --red:#ff2d2d;--cyan:#00d4ff;--border:#1e1e1e;
+  --sans:'Space Grotesk',sans-serif;--serif:'DM Serif Display',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;overflow-x:hidden}
+
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.25}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 3rem;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(8,8,8,.95),transparent)}
+.nav-logo{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-logo:hover{color:var(--text)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#1a0505 0%,#080808 65%)}
+.hero-grid{position:absolute;inset:0;background:linear-gradient(rgba(255,45,45,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,45,45,.025) 1px,transparent 1px);background-size:70px 70px}
+.hero-content{position:relative;z-index:2;max-width:950px}
+.hero-eyebrow{font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--red);margin-bottom:2rem}
+.hero-title{font-family:var(--serif);font-size:clamp(3.5rem,11vw,9.5rem);line-height:.88;margin-bottom:1.25rem}
+.hero-title .ai{color:var(--red);font-style:italic}
+.hero-sub{font-size:clamp(.8rem,1.5vw,1rem);letter-spacing:.4em;text-transform:uppercase;color:var(--muted);margin-bottom:3rem}
+.hero-tagline{font-family:var(--serif);font-style:italic;font-size:clamp(1rem,2vw,1.25rem);color:var(--mid);max-width:600px;margin:0 auto 3rem;line-height:1.7}
+.hero-cta{display:inline-flex;align-items:center;gap:.75rem;border:1px solid rgba(255,255,255,.12);padding:.9rem 2rem;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text);text-decoration:none;transition:all .3s}
+.hero-cta:hover{border-color:var(--red);color:var(--red)}
+.scroll-ind{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;color:var(--muted);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;animation:bob 2s infinite}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+@keyframes glitch{0%,90%,100%{text-shadow:none}92%{text-shadow:-3px 0 var(--red),3px 0 var(--cyan)}95%{text-shadow:3px 0 var(--red)}97%{text-shadow:-2px 0 var(--cyan)}}
+.glitch{animation:glitch 7s infinite}
+
+/* SECTION BASE */
+.sec{padding:6rem 0}
+.sec-inner{max-width:1200px;margin:0 auto;padding:0 3rem}
+.sec-alt{background:var(--bg2)}
+.sec-num{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--red);margin-bottom:1rem;display:block}
+.sec-title{font-family:var(--serif);font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;margin-bottom:1rem}
+.divider{width:50px;height:2px;background:var(--red);margin-top:1.5rem}
+.sec-header{margin-bottom:4rem}
+
+/* VIDEO */
+#video{padding:5rem 3rem;max-width:1200px;margin:0 auto}
+.vid-wrap{aspect-ratio:16/9;background:var(--bg3);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;position:relative;overflow:hidden}
+.vid-wrap::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,45,45,.04),rgba(0,212,255,.04))}
+.play-btn{width:72px;height:72px;border:1.5px solid rgba(255,255,255,.18);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;position:relative;z-index:1}
+.play-btn:hover{border-color:var(--red);background:rgba(255,45,45,.08)}
+.play-btn::after{content:'';border-left:22px solid var(--text);border-top:13px solid transparent;border-bottom:13px solid transparent;margin-left:6px}
+.vid-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);z-index:1}
+
+/* SYNOPSIS */
+.synopsis{max-width:780px;margin:0 auto;padding:4rem 3rem;text-align:center;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.synopsis p{font-family:var(--serif);font-style:italic;font-size:clamp(1.05rem,2.5vw,1.4rem);color:var(--mid);line-height:1.75}
+
+/* STATEMENT */
+.stmt-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.stmt-visual{aspect-ratio:3/4;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0}
+.stmt-visual::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,45,45,.06),rgba(0,212,255,.04))}
+.stmt-visual::after{content:'KEY VISUAL';font-size:.6rem;letter-spacing:.3em;color:var(--muted);position:relative;z-index:1}
+.stmt-text h3{font-family:var(--serif);font-size:1.5rem;margin:2.5rem 0 .75rem}
+.stmt-text h3:first-child{margin-top:0}
+.stmt-text p{color:var(--mid);line-height:1.85;margin-bottom:.85rem;font-size:.9rem}
+.logline{font-family:var(--serif);font-style:italic;font-size:1.1rem;color:var(--text);border-left:3px solid var(--red);padding-left:1.5rem;margin:1.75rem 0;line-height:1.75}
+
+/* TIMELINE */
+.tl{position:relative;padding:2rem 0}
+.tl::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border);transform:translateX(-50%)}
+.tl-item{display:grid;grid-template-columns:1fr 80px 1fr;margin-bottom:3rem;align-items:center}
+.tl-item:nth-child(odd) .tl-c{grid-column:1;text-align:right;padding-right:3rem}
+.tl-item:nth-child(odd) .tl-e{grid-column:3}
+.tl-item:nth-child(even) .tl-c{grid-column:3;text-align:left;padding-left:3rem}
+.tl-item:nth-child(even) .tl-e{grid-column:1}
+.tl-dot{grid-column:2;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.tl-dot-i{width:12px;height:12px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px rgba(255,45,45,.25)}
+.tl-yr{font-size:.6rem;letter-spacing:.1em;color:var(--red);white-space:nowrap}
+.tl-c h4{font-family:var(--serif);font-size:1.05rem;margin-bottom:.5rem}
+.tl-c p{font-size:.82rem;color:var(--muted);line-height:1.65}
+
+/* CARDS */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem}
+.card{background:var(--bg3);border:1px solid var(--border);padding:2rem;transition:border-color .3s}
+.card:hover{border-color:rgba(255,45,45,.35)}
+.card-yr,.card-role{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.75rem;display:block}
+.card-yr{color:var(--red)}
+.card-role{color:var(--cyan)}
+.card h4{font-family:var(--serif);font-size:1.05rem;margin-bottom:.6rem}
+.card p{font-size:.8rem;color:var(--muted);line-height:1.65}
+.card .name{font-size:.95rem;font-weight:600;margin-bottom:.3rem;color:var(--text)}
+
+/* INFO BOX */
+.box{padding:2.5rem;background:var(--bg3);border:1px solid var(--border);margin-top:2rem}
+.box h3{font-family:var(--serif);font-size:1.35rem;margin-bottom:1rem}
+.box p{color:var(--mid);line-height:1.85;font-size:.88rem;max-width:740px}
+
+/* TECH FLOW */
+.flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;margin:2.5rem 0}
+.flow-node{background:var(--bg3);border:1px solid var(--border);padding:1.5rem 1.25rem;text-align:center;min-width:120px}
+.flow-icon{font-size:1.4rem;margin-bottom:.6rem;display:block}
+.flow-lbl{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.3rem}
+.flow-tool{font-size:.82rem;font-weight:600}
+.flow-arr{font-size:1.1rem;color:var(--red);padding:0 .5rem}
+
+/* PALETTE */
+.palette{display:flex;gap:.4rem;margin:1.5rem 0;height:80px}
+.swatch{flex:1;position:relative}
+.swatch span{position:absolute;bottom:.5rem;left:.6rem;font-size:.55rem;letter-spacing:.08em;mix-blend-mode:difference;color:white;line-height:1.4}
+
+/* PROMPT CARDS */
+.p-status{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.85rem;display:inline-block;padding:.25rem .65rem}
+.p-status.fail{background:rgba(255,45,45,.12);color:var(--red)}
+.p-status.ok{background:rgba(0,212,255,.08);color:var(--cyan)}
+.p-txt{font-family:monospace;font-size:.78rem;color:var(--mid);line-height:1.65;margin-bottom:.85rem}
+.p-note{font-size:.73rem;color:var(--muted);font-style:italic}
+
+/* SCRIPT TABLE */
+.script{width:100%;border-collapse:collapse;margin-top:2rem}
+.script th{background:var(--bg3);padding:1rem 1.5rem;text-align:left;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red);border:1px solid var(--border)}
+.script td{padding:1.2rem 1.5rem;border:1px solid var(--border);font-size:.83rem;color:var(--mid);vertical-align:top;line-height:1.75}
+.script tr:hover td{background:rgba(255,255,255,.015)}
+.tc{font-size:.6rem;color:var(--red);letter-spacing:.1em;display:block;margin-bottom:.3rem}
+
+/* CRONOGRAMA */
+.crono{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
+.crono-fase{border:1px solid var(--border);padding:2rem}
+.crono-fase h4{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:1.5rem}
+.crono-item{display:flex;gap:.85rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.crono-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.c-dot{width:8px;height:8px;border-radius:50%;background:var(--border);margin-top:.45rem;flex-shrink:0}
+.c-dot.done{background:var(--cyan)}
+.c-dot.active{background:var(--red)}
+.c-txt{font-size:.8rem;color:var(--mid)}
+.c-date{font-size:.62rem;color:var(--muted);margin-top:.2rem}
+
+/* CONCLUSION */
+.conclusion{background:linear-gradient(135deg,rgba(255,45,45,.05),rgba(0,212,255,.04));border:1px solid var(--border);padding:3rem;margin-top:2rem}
+.conclusion h3{font-family:var(--serif);font-size:1.5rem;margin-bottom:1.5rem}
+.conclusion p{color:var(--mid);line-height:1.85;margin-bottom:1rem;font-size:.9rem}
+.conclusion p:last-child{margin-bottom:0}
+
+/* BIBLIO */
+.biblio{list-style:none;margin-top:2rem}
+.biblio li{padding:1.2rem 0;border-bottom:1px solid var(--border);font-size:.83rem;color:var(--muted);line-height:1.75}
+.biblio li:last-child{border-bottom:none}
+.btag{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);background:rgba(0,212,255,.08);padding:.2rem .5rem;margin-right:.6rem;display:inline-block;margin-bottom:.2rem}
+
+/* FOOTER */
+footer{padding:4rem 3rem;border-top:1px solid var(--border);text-align:center}
+.ft-title{font-family:var(--serif);font-size:2.2rem;margin-bottom:.6rem}
+.ft-sub{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:2rem}
+.ft-credits{font-size:.75rem;color:var(--muted);line-height:2.1}
+
+/* UTILS */
+.h3{font-family:var(--serif);font-size:1.35rem;margin-bottom:1rem;color:var(--text)}
+.sub-p{color:var(--muted);line-height:1.85;font-size:.88rem;max-width:720px}
+.mt2{margin-top:2rem}.mt3{margin-top:3rem}.mt4{margin-top:4rem}.mt5{margin-top:5rem}
+.fade-in{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.fade-in.visible{opacity:1;transform:none}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  .sec-inner{padding:0 1.5rem}
+  .stmt-grid,.grid3,.grid2,.crono{grid-template-columns:1fr}
+  .flow{flex-direction:column}
+  .flow-arr{transform:rotate(90deg)}
+  .tl::before{left:16px}
+  .tl-item{grid-template-columns:40px 1fr}
+  .tl-item:nth-child(odd) .tl-c,.tl-item:nth-child(even) .tl-c{grid-column:2;text-align:left;padding:0 0 0 1.5rem}
+  .tl-dot{grid-column:1}
+  .tl-e{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">Sorkuntza Galdu AI Da?</a>
+  <ul class="nav-links">
+    <li><a href="#statement">I. Aurkezpena</a></li>
+    <li><a href="#teoria">II. Teoria</a></li>
+    <li><a href="#metodologia">III. Metodologia</a></li>
+    <li><a href="#produkzioa">IV. Produkzioa</a></li>
+    <li><a href="#ondorioak">V. Ondorioak</a></li>
+  </ul>
+</nav>
+
+<!-- 0. HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Gradu Amaierako Lana · Bideo-Saiakera · 2026</p>
+    <h1 class="hero-title glitch">
+      Sorkuntza<br>Galdu <span class="ai">AI</span> Da?
+    </h1>
+    <p class="hero-sub">Algoritmoaren Itzala</p>
+    <p class="hero-tagline">Artearen, intelektualismaren eta adimen artifizialaren arteko tentsioa ikusentzunezko sorkuntzan.</p>
+    <a href="#video" class="hero-cta">↓ Ikusi bideo-saiakera</a>
+  </div>
+  <div class="scroll-ind"><span>Irristatu behera</span><span>↓</span></div>
+</section>
+
+<!-- 1. VIDEOENSAYO -->
+<div id="video">
+  <div style="max-width:1200px;margin:0 auto;padding:5rem 3rem">
+    <div class="vid-wrap">
+      <div class="play-btn"></div>
+      <p class="vid-label">Bideo-Saiakera · Laster argitaratuko da</p>
+    </div>
+  </div>
+</div>
+
+<!-- 2. SINOPSIS -->
+<div class="synopsis">
+  <p>"¿Puede una máquina crear? ¿O solo imitar? Este videoensayo explora la fractura entre la intencionalidad humana y la generación algorítmica, trazando un arco desde el videoarte experimental hasta la imagen sintética contemporánea."</p>
+</div>
+
+<!-- I. FRONT-END -->
+<section id="statement" class="sec sec-alt">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <span class="sec-num">I — Aurkezpena eta Identitatea</span>
+      <h2 class="sec-title">Front-End:<br>Zuzendariaren Adierazpena</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="stmt-grid">
+      <div class="stmt-visual"></div>
+      <div class="stmt-text fade-in">
+        <h3>1.1 — Logline e Idea Central</h3>
+        <div class="logline">"En un momento en que los algoritmos aprenden a soñar, el artista se pregunta si la creación es aún un acto humano — o solo un eco entrenado sobre millones de imágenes ajenas."</div>
+        <p>Este videoensayo investiga la reconfiguración de la autoría en el audiovisual contemporáneo. A partir del choque entre la tradición del videoarte y las capacidades generativas de la IA, propone una lectura crítica del prompting como nuevo lenguaje creativo — y del artista como curador involuntario.</p>
+
+        <h3>1.2 — Motivación y Contexto</h3>
+        <p>El proyecto nace de una pregunta personal: como creador que trabaja con imágenes, ¿qué queda de mi mirada cuando delego en una herramienta que "aprende" de todo lo que existe? La fascinación y el vértigo ante esa pregunta son el motor de este ensayo.</p>
+        <p>El contexto es el de un sector audiovisual en plena transformación, donde modelos como Sora, Kling y Runway Gen-3 redefinen qué significa producir una imagen en movimiento, y la industria entera tantea un nuevo equilibrio.</p>
+
+        <h3>1.3 — El Concepto</h3>
+        <p>La tensión central no es entre humano y máquina, sino entre <em>razón</em> y <em>automatización</em>. El videoensayo sostiene que el verdadero conflicto reside en quién — o qué — ejerce el criterio estético, y si ese criterio puede existir sin experiencia vivida ni intención genuina.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- II. TEORÍA -->
+<section id="teoria" class="sec">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <span class="sec-num">II — Gorputz Teorikoa</span>
+      <h2 class="sec-title">Genealogia Bisuala<br>eta Egungo Egoera</h2>
+      <div class="divider"></div>
+    </div>
+
+    <h3 class="h3">3.1 — Del Ruido a la Red</h3>
+    <p class="sub-p" style="margin-bottom:3rem">Línea de tiempo que conecta el videoarte clásico con el prompting actual — de la señal analógica al modelo de difusión.</p>
+
+    <div class="tl">
+      <div class="tl-item fade-in">
+        <div class="tl-c">
+          <h4>Nam June Paik — Videoarte</h4>
+          <p>El padre del videoarte convierte la señal televisiva en materia expresiva. La imagen técnica como territorio estético. La interferencia como lenguaje.</p>
+        </div>
+        <div class="tl-dot"><div class="tl-dot-i"></div><span class="tl-yr">1960s–70s</span></div>
+        <div class="tl-e"></div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-e"></div>
+        <div class="tl-dot"><div class="tl-dot-i"></div><span class="tl-yr">1980s–90s</span></div>
+        <div class="tl-c">
+          <h4>Bill Viola — La imagen trascendental</h4>
+          <p>Viola transforma el vídeo en experiencia contemplativa. Tecnología como vehículo de lo sagrado y lo temporal. El tiempo como material narrativo.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-c">
+          <h4>Primeras CGI — Lo digital entra en la industria</h4>
+          <p>La imagen generada por ordenador irrumpe en el cine. Surge el debate sobre la autenticidad visual. Lo real y lo artificial empiezan a confundirse.</p>
+        </div>
+        <div class="tl-dot"><div class="tl-dot-i"></div><span class="tl-yr">2000s</span></div>
+        <div class="tl-e"></div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-e"></div>
+        <div class="tl-dot"><div class="tl-dot-i"></div><span class="tl-yr">2010s</span></div>
+        <div class="tl-c">
+          <h4>GANs — La máquina aprende a imaginar</h4>
+          <p>Las redes generativas adversariales producen imágenes verosímiles. El deepfake como síntoma cultural. Primera gran crisis de la autoría visual algorítmica.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-c">
+          <h4>Modelos de Difusión — Era del Prompting</h4>
+          <p>Midjourney, Sora, Runway. Cualquiera puede "crear" con texto. El prompt como nuevo lenguaje artístico. La democratización radical de la imagen.</p>
+        </div>
+        <div class="tl-dot"><div class="tl-dot-i"></div><span class="tl-yr">2022–hoy</span></div>
+        <div class="tl-e"></div>
+      </div>
+    </div>
+
+    <div class="mt5">
+      <h3 class="h3">3.2 — Marco Conceptual: Estética de lo Inquietante y el Simulacro</h3>
+      <p class="sub-p">Das Unheimliche (Freud), el Uncanny Valley (Mori) y el Simulacro (Baudrillard) forman el tríptico teórico del ensayo. La IA no inquieta porque sea mala — inquieta precisamente porque es demasiado buena. Y porque no tiene nada que decir.</p>
+    </div>
+
+    <div class="mt5">
+      <h3 class="h3">4.1 — Referentes Contemporáneos: Bill Viola vs. Estética GenAI</h3>
+      <div class="grid3">
+        <div class="card fade-in"><p class="card-yr">1977–1979</p><h4>The Reflecting Pool</h4><p>Exploración del tiempo y la percepción. El cuerpo suspendido en el agua como metáfora de la existencia entre lo real y lo representado.</p></div>
+        <div class="card fade-in"><p class="card-yr">1996</p><h4>The Crossing</h4><p>Fuego y agua como fuerzas opuestas y complementarias. La destrucción como transformación. La imagen de alta definición como experiencia visceral.</p></div>
+        <div class="card fade-in"><p class="card-yr">2013</p><h4>The Dreamers</h4><p>Figuras en trance, entre el sueño y la vigilia. Tecnología al servicio de la espiritualidad. Contrapunto directo a la estética inmediata de la IA.</p></div>
+      </div>
+    </div>
+
+    <div class="box mt4 fade-in">
+      <h3>4.2 — Capacidades y Limitaciones del Vídeo Generado por IA (2025–2026)</h3>
+      <p>Los modelos actuales (Sora, Kling, Runway Gen-3, Luma Dream Machine) pueden generar vídeo fotorrealista de hasta 2 minutos con coherencia visual notable, pero siguen fallando en continuidad temporal, física de fluidos, coherencia tipográfica y movimiento de manos. La brecha entre lo que <em>puede generarse</em> y lo que <em>puede decirse</em> con ello sigue siendo el territorio del artista.</p>
+    </div>
+  </div>
+</section>
+
+<!-- III. METODOLOGÍA -->
+<section id="metodologia" class="sec sec-alt">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <span class="sec-num">III — Metodologia eta Workflow Teknologikoa</span>
+      <h2 class="sec-title">Ikerketa-Sorkuntzaren<br>Estrategia</h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="mb fade-in">
+      <h3 class="h3">5.1 — Metodología: Investigación-Creación</h3>
+      <p class="sub-p">El proyecto adopta una metodología de <em>investigación-creación</em>: el proceso de producción del videoensayo es en sí mismo el objeto de estudio. La experimentación con herramientas de IA generativa se documenta y analiza como práctica artística reflexiva, registrando tanto los aciertos como los fracasos del workflow.</p>
+    </div>
+
+    <div class="mt4">
+      <h3 class="h3">5.2 — Tech Stack: Flujo de Trabajo</h3>
+      <div class="flow">
+        <div class="flow-node fade-in"><span class="flow-icon">📝</span><span class="flow-lbl">Texto</span><span class="flow-tool">Claude / ChatGPT</span></div>
+        <span class="flow-arr">→</span>
+        <div class="flow-node fade-in"><span class="flow-icon">🎨</span><span class="flow-lbl">Imagen</span><span class="flow-tool">Leonardo AI</span></div>
+        <span class="flow-arr">→</span>
+        <div class="flow-node fade-in"><span class="flow-icon">🎬</span><span class="flow-lbl">Vídeo</span><span class="flow-tool">Luma / Kling</span></div>
+        <span class="flow-arr">→</span>
+        <div class="flow-node fade-in"><span class="flow-icon">🎙</span><span class="flow-lbl">Voz</span><span class="flow-tool">ElevenLabs</span></div>
+        <span class="flow-arr">→</span>
+        <div class="flow-node fade-in"><span class="flow-icon">✂️</span><span class="flow-lbl">Edición</span><span class="flow-tool">Premiere / DaVinci</span></div>
+      </div>
+    </div>
+
+    <div class="mt4">
+      <h3 class="h3">5.3 — Justificación Técnica de Herramientas</h3>
+      <div class="grid3">
+        <div class="card fade-in"><p class="card-role">Generación de Imagen</p><p class="name">Leonardo AI</p><p>Mayor control sobre el estilo visual mediante LoRAs y fine-tuning. Permite mantener coherencia estética a lo largo del proyecto. Alternativa a Midjourney con mejor personalización.</p></div>
+        <div class="card fade-in"><p class="card-role">Image-to-Video</p><p class="name">Luma Dream Machine</p><p>Generación fluida de movimiento a partir de imágenes estáticas. Ideal para animar fotogramas de Leonardo manteniendo la coherencia visual del proyecto.</p></div>
+        <div class="card fade-in"><p class="card-role">Síntesis de Voz</p><p class="name">ElevenLabs</p><p>Narración en off con voz sintética de alta calidad. Usar una voz artificial para el narrador es en sí misma una decisión conceptual: la IA habla sobre sí misma.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IV. PRODUCCIÓN -->
+<section id="produkzioa" class="sec">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <span class="sec-num">IV — Produkzio Memoria</span>
+      <h2 class="sec-title">Sintesiaren<br>Garapena</h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="fade-in">
+      <h3 class="h3">6.1 — Paleta Emocional, Moodboard y Atmósfera</h3>
+      <div class="palette">
+        <div class="swatch" style="background:#0a0a0a"><span>#0a0a0a<br>Vacío</span></div>
+        <div class="swatch" style="background:#1a0505"><span>#1a0505<br>Tensión</span></div>
+        <div class="swatch" style="background:#ff2d2d"><span>#ff2d2d<br>Fractura</span></div>
+        <div class="swatch" style="background:#c0a882"><span>#c0a882<br>Humanidad</span></div>
+        <div class="swatch" style="background:#00d4ff"><span>#00d4ff<br>Algoritmo</span></div>
+        <div class="swatch" style="background:#e8e3d9"><span>#e8e3d9<br>Memoria</span></div>
+      </div>
+      <p class="sub-p">La atmósfera visual mezcla la oscuridad contemplativa de Viola con la frialdad sintética de la estética GenAI. El contraste entre rojo (emoción, carne, error) y cian (datos, red, precisión) vertebra toda la paleta del proyecto.</p>
+    </div>
+
+    <div class="mt5">
+      <h3 class="h3">6.2 — Deconstrucción del Prompt: Iteraciones (Fallos vs. Aciertos)</h3>
+      <p class="sub-p" style="margin-bottom:1.5rem">Registro comparativo de los prompts fallidos y los que funcionaron durante el proceso de generación.</p>
+      <div class="grid2">
+        <div class="card fade-in"><span class="p-status fail">✕ Iteración Fallida</span><p class="p-txt">"A human hand dissolving into pixels, digital art, hyperrealistic, 8k, trending on artstation"</p><p class="p-note">Resultado genérico. Estética de stock. Sin tensión conceptual. El modelo interpreta "dissolving" de forma literal y decorativa.</p></div>
+        <div class="card fade-in"><span class="p-status ok">✓ Iteración Correcta</span><p class="p-txt">"Slow exposure photograph of a sculptor's hand mid-gesture, film grain, chiaroscuro, fingers blurring into static noise, Andrei Tarkovsky --ar 16:9 --style raw"</p><p class="p-note">La referencia cinematográfica específica y la descripción procesual generan una imagen con tensión visual auténtica.</p></div>
+        <div class="card fade-in"><span class="p-status fail">✕ Iteración Fallida</span><p class="p-txt">"AI robot creating art, futuristic, neon lights, cyberpunk aesthetic"</p><p class="p-note">Caída en los clichés del género. La metáfora visual más obvia es siempre la menos interesante conceptualmente.</p></div>
+        <div class="card fade-in"><span class="p-status ok">✓ Iteración Correcta</span><p class="p-txt">"Empty atelier, afternoon light through venetian blinds, abandoned canvas, half-finished painting, dust particles, 16mm film look, silence"</p><p class="p-note">La ausencia del artista es más elocuente que su presencia. La IA captura el vacío mejor que la acción.</p></div>
+      </div>
+    </div>
+
+    <div class="mt5 fade-in">
+      <h3 class="h3">7 — Guion y Escaleta: Estructura Narrativa (5 minutos)</h3>
+      <table class="script">
+        <thead><tr><th style="width:105px">TC</th><th>Audio — Narración / Voz</th><th>Vídeo — Imagen Generada</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tc">Bloque 1</span>00:00–00:45</td><td>Silencio. Ambientación sonora. Primeras palabras: <em>"Antes de la imagen, hubo una intención."</em></td><td>Apertura: mano sobre lienzo en blanco, grain de 16mm, fundido desde negro.</td></tr>
+          <tr><td><span class="tc">Bloque 2</span>00:45–01:45</td><td>Genealogía del videoarte. Paik y Viola. <em>"La imagen técnica siempre fue una pregunta sobre el tiempo."</em></td><td>Collage de referencias históricas, glitch effects, transición a archivo estilizado.</td></tr>
+          <tr><td><span class="tc">Bloque 3</span>01:45–03:00</td><td>El conflicto central: IA como herramienta vs. IA como autor. <em>"¿Puede existir criterio sin experiencia?"</em></td><td>Split screen: frames de The Crossing (Viola) yuxtapuestos con salidas de Sora.</td></tr>
+          <tr><td><span class="tc">Bloque 4</span>03:00–04:15</td><td>El prompting como acto creativo. El artista como curador, no como ejecutor.</td><td>Pantalla dividida: interfaz de generación + resultado final. El proceso como obra.</td></tr>
+          <tr><td><span class="tc">Bloque 5</span>04:15–05:00</td><td>Conclusión abierta. <em>"El algoritmo no ha matado al artista. Le ha obligado a preguntarse qué es."</em></td><td>Plano final: cursor parpadeante sobre prompt vacío. Fundido a negro.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box mt4 fade-in">
+      <h3>8 — Fase de Generación y Montaje</h3>
+      <p>El flujo va de imagen estática (Leonardo) a animación (Luma/Kling) con corrección manual de glitches temporales. La voz sintetizada (ElevenLabs) se graba antes del montaje para ajustar el timing visual a la narración. El montaje final integra capas de grano fílmico, color grading frío-cálido y sound design ambiente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- V. RESULTADOS -->
+<section id="ondorioak" class="sec sec-alt">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <span class="sec-num">V — Emaitzak eta Hausnarketa Kritikoa</span>
+      <h2 class="sec-title">Ondorioak eta<br>Etorkizuneko Begirada</h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="conclusion fade-in">
+      <h3>9 — Autoría y Futuro: Reflexión Final</h3>
+      <p>La experiencia de producir este videoensayo con IA generativa confirma la hipótesis de partida: el verdadero trabajo creativo se desplaza de la ejecución técnica hacia el criterio curatorial. El artista ya no fabrica la imagen — la selecciona, la interroga, la contextualiza.</p>
+      <p>Esto no implica la muerte del arte. Implica su redefinición. La pregunta <em>"Galdu AI Da?"</em> no tiene respuesta binaria. La creatividad no se ha perdido, pero ha cambiado de naturaleza — o quizás, de manos.</p>
+      <p>El mayor riesgo no es que la IA reemplace al artista. Es que la facilidad técnica elimine la necesidad del pensamiento previo a la imagen.</p>
+    </div>
+
+    <div class="mt5">
+      <h3 class="h3">10 — Kronograma 2026</h3>
+      <div class="crono">
+        <div class="crono-fase fade-in">
+          <h4>Pre-producción</h4>
+          <div class="crono-item"><div class="c-dot done"></div><div><div class="c-txt">Marco teórico y genealogía</div><div class="c-date">Ene–Feb 2026</div></div></div>
+          <div class="crono-item"><div class="c-dot done"></div><div><div class="c-txt">Guion literario y escaleta</div><div class="c-date">Feb 2026</div></div></div>
+          <div class="crono-item"><div class="c-dot active"></div><div><div class="c-txt">Selección y prueba de herramientas</div><div class="c-date">Feb–Mar 2026</div></div></div>
+        </div>
+        <div class="crono-fase fade-in">
+          <h4>Síntesis</h4>
+          <div class="crono-item"><div class="c-dot active"></div><div><div class="c-txt">Generación de imágenes (Leonardo)</div><div class="c-date">Mar 2026</div></div></div>
+          <div class="crono-item"><div class="c-dot"></div><div><div class="c-txt">Animación Image-to-Video (Luma)</div><div class="c-date">Abr 2026</div></div></div>
+          <div class="crono-item"><div class="c-dot"></div><div><div class="c-txt">Síntesis de voz (ElevenLabs)</div><div class="c-date">Abr 2026</div></div></div>
+        </div>
+        <div class="crono-fase fade-in">
+          <h4>Post-producción</h4>
+          <div class="crono-item"><div class="c-dot"></div><div><div class="c-txt">Montaje y color grading</div><div class="c-date">May 2026</div></div></div>
+          <div class="crono-item"><div class="c-dot"></div><div><div class="c-txt">Corrección de glitches</div><div class="c-date">May 2026</div></div></div>
+          <div class="crono-item"><div class="c-dot"></div><div><div class="c-txt">Entrega final TFG</div><div class="c-date">Jun 2026</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt5 fade-in">
+      <h3 class="h3">11 — Bibliografía y Créditos (APA)</h3>
+      <ul class="biblio">
+        <li><span class="btag">Libro</span>Baudrillard, J. (1981). <em>Simulacra and Simulation</em>. Éditions Galilée.</li>
+        <li><span class="btag">Libro</span>Flusser, V. (1983). <em>Towards a Philosophy of Photography</em>. European Photography.</li>
+        <li><span class="btag">Libro</span>Benjamin, W. (1935). <em>La obra de arte en la era de su reproductibilidad técnica</em>. Suhrkamp.</li>
+        <li><span class="btag">Libro</span>Freud, S. (1919). <em>Das Unheimliche</em>. Imago.</li>
+        <li><span class="btag">Artículo</span>Elgammal, A. et al. (2017). <em>CAN: Creative Adversarial Networks</em>. arXiv:1706.07068.</li>
+        <li><span class="btag">Web</span>Viola, B. (2024). <em>Bill Viola Studio — Artist Statement</em>. billviola.com</li>
+        <li><span class="btag">Herramienta</span>Leonardo AI. (2024). <em>AI Image Generation Platform</em>. leonardo.ai</li>
+        <li><span class="btag">Herramienta</span>ElevenLabs. (2024). <em>AI Voice Synthesis</em>. elevenlabs.io</li>
+        <li><span class="btag">Herramienta</span>Luma AI. (2024). <em>Dream Machine — Video Generation</em>. lumalabs.ai</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p class="ft-title">Sorkuntza Galdu AI Da?</p>
+  <p class="ft-sub">Algoritmoaren Itzala · Gradu Amaierako Lana 2026</p>
+  <p class="ft-credits">
+    Zuzendaria: [Zure Izena] · Tutorea: [Tutorearen Izena]<br>
+    [Unibertsitate Izena] · Ikusentzunezko Komunikazioa · 2025–2026
+  </p>
+</footer>
+
+<script>
+// NAV active on scroll
+const secs = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('.nav-links a');
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      links.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if(a) a.classList.add('active');
+    }
+  });
+},{threshold:.25});
+secs.forEach(s => navObs.observe(s));
+
+// Fade-in on scroll
+const fadeEls = document.querySelectorAll('.fade-in');
+const fadeObs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if(e.isIntersecting){
+      setTimeout(() => e.target.classList.add('visible'), i*60);
+    }
+  });
+},{threshold:.08});
+fadeEls.forEach(el => fadeObs.observe(el));
+</script>
+</body>
+</html>
